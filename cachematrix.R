@@ -1,11 +1,12 @@
-## Put comments here that give an overall description of what your
-## functions do
+## R functions that are able to cache potentially time-consuming computations
+## which involve caching the Inverse of a Matrix
 ## Written By Wes Sauder
-## Write a short comment describing this function
+## January 20, 2015
+
 
 
 # Function: "makeCacheMatrix" - creates a special "matrix" object that 
-#  can cache its inverse.
+#       can cache its inverse for quick retrieval using cacheSolve below.
 makeCacheMatrix <- function(x = matrix()) {
 
         ## 'x' is a function from the base package to create a matrix 
@@ -18,7 +19,7 @@ makeCacheMatrix <- function(x = matrix()) {
                 m <<- NULL
         }
         get <- function() x
-        print(matrix())
+        
         setmatrix <- function(matrix) m <<- matrix
         getmatrix <- function() m
         list(set = set, get = get,
@@ -27,65 +28,64 @@ makeCacheMatrix <- function(x = matrix()) {
 
 }
 
-## Write a short comment describing this function
+## This function computes the inverse of the special "matrix" 
+##      returned by makeCacheMatrix above unless the inverse has been
+##      calculated previously - Function retrieves inverse from cache
+##      if calculation has been performed.
 
 cacheSolve <- function(x, ...) {
         ## Return a matrix that is the inverse of 'x'
         m <- x$getmatrix()
+        
+        ##Check if inverse calculation exists - return inverse of matrix
+        ##      stored in cache and exit function
         if(!is.null(m)) {
                 message("getting cached data")
+                ##print(m)    ## uncomment to validate returned matrix (Previously Calc IN Cache)
                 return(m)
         }
         data <- x$get()
-        print("Data")
-        print(data)
-        print("Answer m")
+        
         m <- solve(data)
-        print(m)
+        
         mTWO <-solve(data)
-        print("Answer mTWO")
-        print(mTWO)
-        #x$setmatrix(m)
+        
         x$setmatrix(m)
+        ##print(m)    ## uncomment to validate returned matrix (NOT in Cache)
         
         m
-        print(m)
         
         
 }
 
 
+## Test Code for Example:
+## remove comments to try code
+## Confirmation Dataset:
 
-B = matrix(4:7,nrow=2,ncol=2)
-print(B)
+        #a <- matrix(c(2,3,5,7,11,13,17,19,23),3,3)
+        #b <- solve(a)
 
-fList <- makeCacheMatrix(B)
+## Results for b should be as follows:
+## [,1]       [,2]        [,3]
+## [1,] -0.07692308 -0.7692308  0.69230769
+## [2,] -0.33333333  0.5000000 -0.16666667
+## [3,]  0.20512821 -0.1153846 -0.01282051
 
-Result <- cacheSolve(fList,B) #1st call, this will compute the inverse
+#       fList <- makeCacheMatrix(a)
+#       Result <- cacheSolve(fList,a) #1st call, this will compute the inverse
+
+## Try again and see if answer will return from cach
 
 
+#       c = a
+#       fList_c <- makeCacheMatrix(c)
+#       Result_c <- cacheSolve(fList,c) #1st call, this will compute the inverse
 
+## The following should return value from the cache
+##getting cached data
+##[,1]       [,2]        [,3]
+##[1,] -0.07692308 -0.7692308  0.69230769
+##[2,] -0.33333333  0.5000000 -0.16666667
+##[3,]  0.20512821 -0.1153846 -0.01282051
 
-
-
-## matrix(data = NA, nrow = 1, ncol = 1, byrow = FALSE,
-##       dimnames = NULL)
-## Arguments
-
-## data:    
-##        an optional data vector (including a list or expression vector). 
-##        Non-atomic classed R objects are coerced by as.vector and all attributes discarded.
-
-## nrow:
-##      the desired number of rows.
-## ncol:
-##      the desired number of columns.
-## byrow:
-##      Logical. If FALSE (the default) the matrix is filled by columns, 
-##      otherwise the matrix is filled by rows.
-## dimnames:
-##      A dimnames attribute for the matrix: NULL or a list of length 2 giving the row and column names 
-##      respectively. An empty list is treated as NULL, and a list of length one as row names. 
-##      The list can be named, and the list names will be used as names for the dimensions.
-## x:        
-##      an R object.
